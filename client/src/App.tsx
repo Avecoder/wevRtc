@@ -1,12 +1,15 @@
 
 import './App.css'
 
-import { AppRouter } from './AppRouter'
+import { AppRouter } from './components/AppRouter'
+import { WebSocketWrap } from './context/WebSocketWrap'
 function App() {
 
 
   return (
-    <AppRouter />
+    <WebSocketWrap>
+      <AppRouter />
+    </WebSocketWrap>
   )
 }
 

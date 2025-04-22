@@ -1,5 +1,5 @@
-import { StartPage } from "./StartPage"
-import { RoomPage } from "./RoomPage"
+import { StartPage } from "./components/StartPage"
+import { RoomPage } from "./components/RoomPage"
 
 
 export const routes = [

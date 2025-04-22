@@ -1,0 +1,1 @@
+export {CamIcon} from './CamIcon'
