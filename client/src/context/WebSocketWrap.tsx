@@ -31,7 +31,7 @@ export const WebSocketWrap = ({ children }: { children: ReactNode }) => {
   const subscribersRef = useRef<Map<string, (data: any) => void>>(new Map())
 
   useEffect(() => {
-    const ws = new WebSocket('ws://localhost:8080')
+    const ws = new WebSocket('ws://192.168.3.13:8080')
 
     ws.onopen = () => {
       console.log('WebSocket connected')

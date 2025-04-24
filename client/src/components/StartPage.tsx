@@ -33,6 +33,7 @@ export const StartPage = () => {
         await newDevice.load({ routerRtpCapabilities: response.routerRtpCapabilities })
         setDevice(newDevice)
 
+        console.log(response)
         const sendTransport = newDevice.createSendTransport(response.transportOptions)
         const recvTransport = newDevice.createRecvTransport(response.transportOptions)
 
@@ -86,6 +87,20 @@ export const StartPage = () => {
         localStorage.setItem('userName', name.trim())
         
     }
+
+    useEffect(() => {
+        const handleClick = (e: KeyboardEvent) => {
+            if(e.key == 'Enter' && isEdit) {
+                handleChangeName()
+                setEdit(false)
+            }
+        }
+        window.addEventListener('keydown', handleClick)
+
+        return () => {
+            window.removeEventListener('keydown', handleClick)
+        }
+    }, [isEdit])
 
     return (
         <>

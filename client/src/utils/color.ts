@@ -1,6 +1,6 @@
 
 
-export const getRandomColor = (index: number): string => {
+export const getRandomColor = (): string => {
     const colors = [
       '#5865F2', // blurple
       '#57F287', // green
@@ -13,5 +13,5 @@ export const getRandomColor = (index: number): string => {
       '#9B59B6', // purple
     ];
   
-    return colors[index % colors.length];
+    return colors[Math.floor(Math.random() * 10000) % colors.length];
   };

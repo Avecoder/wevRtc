@@ -1,6 +1,6 @@
 import WebSocket, {WebSocketServer} from "ws";
 import dotenv from 'dotenv'
-import {parseMessage, rooms} from '../handlers/socketHandler.js'
+import {parseMessage, rooms} from '../handlers/actions.js'
 dotenv.config()
 
 
@@ -14,14 +14,14 @@ export const webSocket = new WebSocketServer({port: PORT})
 
 
 webSocket.on('connection', (ws) => {
-    console.log('A user connected');
+    // console.log('A user connected');
     
     // Когда сервер получает сообщение от клиента
     ws.on('message', (message) => {
 
       try {
-        const {currAction, roomId, name, kind, rtpParameters, producerUserId} = parseMessage(message)
-        currAction?.({ws, roomId, name, kind, rtpParameters, producerUserId})
+        const {currAction, ...somethigData} = parseMessage(message)
+        currAction?.({ws, ...somethigData})
       } catch(err) {
         console.log('ERROR ws message - ', err)
       }
@@ -29,9 +29,10 @@ webSocket.on('connection', (ws) => {
   
     // Когда клиент закрывает соединение
     ws.on('close', () => {
-      console.log('A user disconnected');
+      
       for (const room of Object.values(rooms)) {
         room.removeUser(ws)
+        // console.log(ws)
     
         // Опционально — удаляем transport, привязанный к этому ws
         const transportsToRemove = room.transports.filter(t => t.appData?.ws === ws)

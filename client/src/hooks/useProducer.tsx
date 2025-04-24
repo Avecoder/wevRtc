@@ -4,9 +4,11 @@ import React, { useEffect } from 'react'
 import { useMicro } from './useMicro';
 import { useWebSocket } from '../context/WebSocketWrap';
 
-export const useProducer = (roomId: string) => {
+export const useProducer = (roomId: string, time: number) => {
     const {socket: ws, getSubscribe} = useWebSocket()
     const {audioTrack} = useMicro()
+
+    
   
     const handleCreateStream = async () => {
         const transportInfo: any = getSubscribe('transport');
@@ -20,6 +22,7 @@ export const useProducer = (roomId: string) => {
         try {
           // 🔌 Connect DTLS
           sendTransport.on('connect', async ({ dtlsParameters }, callback, errback) => {
+            console.log("DTLS PARAM - ", dtlsParameters)
             try {
               const message = JSON.stringify({
                 action: 'CONNECTTRANSPORT',
@@ -38,18 +41,21 @@ export const useProducer = (roomId: string) => {
       
           // 📡 Produce
           sendTransport.on('produce', async ({ kind, rtpParameters }, callback, errback) => {
+
+            console.log("RTP PARAM - ", rtpParameters)
             try {
               const message = {
                 action: 'CREATEPRODUCER',
                 kind,
                 rtpParameters,
-                roomId
+                roomId,
+                time
               };
       
               const listener = (event) => {
                 const data = JSON.parse(event.data);
                 if (data.type === 'PRODUCERCREATED') {
-                  ws.removeEventListener('message', listener); // удаляем после получения ответа
+                  ws.removeEventListener('message', listener);
                   callback({ id: data.producerId });
                 }
               };
@@ -61,7 +67,15 @@ export const useProducer = (roomId: string) => {
               errback(error);
             }
           });
-      
+
+          console.log('audioTrack:', audioTrack);
+          console.log('kind:', audioTrack.kind);
+          console.log('id:', audioTrack.id);
+          console.log('label:', audioTrack.label);
+          console.log('enabled:', audioTrack.enabled);
+          console.log('muted:', audioTrack.muted);
+          console.log('readyState:', audioTrack.readyState);
+                
           // 🧪 Пытаемся создать producer
           const producer = await sendTransport.produce({
             track: audioTrack,
@@ -69,9 +83,12 @@ export const useProducer = (roomId: string) => {
               opusStereo: true,
               opusDtx: true,
             },
+            appData: {
+              time
+            }
           });
       
-        //   console.log("Producer created:", producer);
+          console.log("Producer created:", producer);
         } catch (error) {
           console.error("Error during produce:", error);
         }

@@ -17,7 +17,6 @@ export class Room {
       rtcMaxPort: 20000,
     });
 
-    console.log(`Worker initialized for room ${this.roomId}`);
 
     this.router = await this.worker.createRouter({
       mediaCodecs: [
@@ -30,7 +29,6 @@ export class Room {
       ],
     });
 
-    console.log(`Router initialized for room ${this.roomId}`);
   }
 
   addUser(ws) {
@@ -42,7 +40,6 @@ export class Room {
         producers: [],
         consumers: [],
       });
-      console.log(`User added to room ${this.roomId}`);
     }
   }
 
@@ -50,7 +47,6 @@ export class Room {
     this.users = this.users.filter(user => user.socket !== ws);
     this.transports = this.transports.filter(t => t.appData.socket !== ws);
     this.producers = this.producers.filter(p => p.socket !== ws);
-    console.log(`User removed from room ${this.roomId}`);
   }
 
   getUser(ws) {
@@ -86,7 +82,6 @@ export class Room {
     }
 
     transport.observer.on('newproducer', (producer) => {
-      console.log(`New producer created [id:${producer.id}]`);
       this.broadcast({
         action: 'NEW_PRODUCER',
         producerId: producer.id,
@@ -126,6 +121,15 @@ export class Room {
     if (user) {
       user.consumers.push(consumer);
     }
+  }
+
+  getAllTransports() {
+    return this.transports
+  }
+
+  findProducerById(producerId) {
+    const found = this.producers.find(p => p.producer.id === producerId);
+    return found ? found.producer : null;
   }
 
   broadcast(message) {

@@ -1,9 +1,10 @@
 import { Avatar, Card, CardContent, Typography } from '@mui/material'
 import { getRandomColor } from '../utils/color'
 import { motion } from 'framer-motion'
+import { useMemo } from 'react'
 
 export const UserCard = ({ name, index }: { name: string, index: number }) => {
-    const background = getRandomColor(index)
+    const background = useMemo(() => getRandomColor(), [])
 
     return (
         <motion.div

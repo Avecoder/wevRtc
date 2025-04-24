@@ -1,6 +1,6 @@
 import { useLocation } from "react-router-dom"
 import { UserCard } from "./UserCard"
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { useWebSocket } from "../context/WebSocketWrap"
 import { calculationGrid } from "../utils/grid"
 import { Controls } from "./Controls"
@@ -21,9 +21,11 @@ export const RoomPage = () => {
         },
     ])
 
+    const capabilities = RTCRtpReceiver.getCapabilities('audio');
+console.log(capabilities);
+
     const {socket: ws, getSubscribe} = useWebSocket()
 
-    const {audioTrack} = useMicro()
 
     const handleGetList = () => {
         if(!ws) return;
@@ -46,9 +48,11 @@ export const RoomPage = () => {
         ws.send(message)
     }
 
-    useProducer(id ?? '')
+    const time = useMemo(() => Date.now(), []);
+
+    useProducer(id ?? '', time)
       
-    useConsumer(id ?? '')
+    useConsumer(id ?? '', time)
 
     useEffect(() => {
         if(ws) {
